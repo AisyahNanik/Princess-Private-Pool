@@ -7,8 +7,22 @@
     },
     "routes": [
         {
+            "src": "/build/(.*)",
+            "dest": "/build/$1",
+            "headers": {
+                "cache-control": "public, max-age=31536000, immutable"
+            }
+        },
+        {
             "src": "/storage/(.*)",
             "dest": "/storage/app/public/$1"
+        },
+        {
+            "src": "/(css|js|images|fonts)/(.*)",
+            "dest": "/$1/$2",
+            "headers": {
+                "cache-control": "public, max-age=31536000"
+            }
         },
         {
             "src": "/(.*)",
@@ -19,7 +33,8 @@
         "PHP_INI_SCAN_DIR": "api",
         "APP_ENV": "production",
         "APP_DEBUG": "false",
-        "APP_URL": "https://your-vercel-domain.vercel.app",
+        "APP_URL": "https://princess-private-pool.vercel.app",
+        "ASSET_URL": "https://princess-private-pool.vercel.app",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
@@ -29,6 +44,7 @@
         "CACHE_DRIVER": "array",
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie",
+        "SESSION_SECURE_COOKIE": "true",
         "DB_CONNECTION": "mysql",
         "DB_HOST": "",
         "DB_PORT": "",
