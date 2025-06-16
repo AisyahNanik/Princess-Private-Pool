@@ -52,18 +52,18 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://princess-private-pool-aisyahnanik95-gmailcoms-projects.vercel.app/'),
+    'url' => env('APP_URL', 'https://princess-private-pool.vercel.app'),
 
-    /*
+   /*
     |--------------------------------------------------------------------------
-    | Application Timezone
+    | Asset URL
     |--------------------------------------------------------------------------
     |
-    | Here you may specify the default timezone for your application, which
-    | will be used by the PHP date and date-time functions. The timezone
-    | is set to "UTC" by default as it is suitable for most use cases.
-    |
-    */
+    | This URL is used by the console to properly generate URLs when using
+    | the Artisan command line tool. You should set this to the root of
+    | your application so that it's used when generating asset URLs.
+    | */
+    
     'asset_url' => env('ASSET_URL'),
 
     'timezone' => env('APP_TIMEZONE', 'UTC'),

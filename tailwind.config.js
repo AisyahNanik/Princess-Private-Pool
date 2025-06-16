@@ -4,9 +4,12 @@ import forms from '@tailwindcss/forms';
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./resources/views/layouts/app.blade.php",
-    "./resources/js/app.js",
-    "./resources/css/app.css",
+    // 
+    './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
+    './storage/framework/views/*.php',
+    './resources/views/**/*.blade.php',
+    './resources/js/**/*.js',
+    './resources/css/**/*.css',
   ],
   theme: {
     extend: {},

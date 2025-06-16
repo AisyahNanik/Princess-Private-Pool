@@ -32,7 +32,7 @@
     "env": {
         "PHP_INI_SCAN_DIR": "api",
         "APP_ENV": "production",
-        "APP_DEBUG": "false",
+        "APP_DEBUG": "true",
         "APP_URL": "https://princess-private-pool.vercel.app",
         "ASSET_URL": "https://princess-private-pool.vercel.app",
         "APP_CONFIG_CACHE": "/tmp/config.php",
@@ -44,6 +44,7 @@
         "CACHE_DRIVER": "array",
         "LOG_CHANNEL": "stderr",
         "SESSION_DRIVER": "cookie",
+        "SESSION_LIFETIME": "120",
         "SESSION_SECURE_COOKIE": "true",
         "DB_CONNECTION": "mysql",
         "DB_HOST": "",
