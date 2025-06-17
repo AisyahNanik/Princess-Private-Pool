@@ -1,128 +1,69 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>Princess Private Pools</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #FFB6C1, #87CEFA, #FFFFFF);
-            background-size: 400% 400%;
-            animation: gradientAnimation 8s ease infinite;
-            position: relative;
-            overflow-x: hidden;
-            color: #333;
-        }
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .container {
-            padding-top: 50px;
-            text-align: center;
-        }
-        .pool-list-title {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 2rem;
-            color: #2c3e50;
-        }
-        .pool-card-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-        .pool-card {
-            width: 300px;
-            border-radius: 12px;
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            background-color: #f8f9fa;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .pool-card img {
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            object-fit: cover;
-            height: 200px;
-            width: 100%;
-        }
-        .pool-card-body {
-            padding: 20px;
-        }
-        .pool-card-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #3498db;
-        }
-        .pool-card-text {
-            color: #555;
-            margin-bottom: 15px;
-        }
-        .pool-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
+<body class="font-sans antialiased bg-gradient-to-br from-pink-300 via-blue-300 to-white min-h-screen flex flex-col items-center justify-center text-gray-800 p-6">
+    <div class="container mx-auto px-4 py-8 text-center">
+        <h1 class="text-5xl font-extrabold text-gray-900 mb-12 drop-shadow-lg">Princess Private Pools</h1>
 
-    <div class="container">
-        <h1 class="pool-list-title">Princess Private Pools</h1>
-
-        {{-- Tombol Tambah hanya untuk Admin --}}
+        {{-- Add Button for Admin Only --}}
         @if(Auth::check() && auth()->user()->role === 'admin')
-            <div class="mb-5">
-                <a href="{{ route('admin.swimmingpools.create') }}" class="btn btn-primary">
-                    + Create Swimming Pool
+            <div class="mb-10">
+                <a href="{{ route('customer.swimmingpools.create') }}" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-lg text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 transition duration-300 ease-in-out transform hover:scale-105">
+                    <svg class="-ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    Create New Pool
                 </a>
             </div>
         @endif
 
-        {{-- Menampilkan daftar swimming pools --}}
-        <div class="pool-card-container">
-            @if(isset($swimmingpools) && count($swimmingpools) > 0)
-                <p>No swimming pools available.</p>
-            @else
+        {{-- Display list of swimming pools --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 justify-items-center">
+            @if(isset($swimmingpools) && $swimmingpools->isNotEmpty())
                 @foreach($swimmingpools as $swimmingpool)
-                    <div class="pool-card">
-                        <img src="{{ Storage::url($swimmingpool->image) }}" class="rounded">
-                        <div class="pool-card-body">
-                            <h5 class="pool-card-title">{{ $swimmingpool->name }}</h5>
-                            <p class="pool-card-text">{{ $swimmingpool->description }}</p>
-                            <div class="d-flex justify-content-between mt-3">
-                                {{-- Link berdasarkan role pengguna --}}
+                    <div class="bg-white rounded-xl shadow-xl overflow-hidden transform transition duration-500 hover:scale-105 hover:shadow-2xl max-w-sm w-full">
+                        <img src="{{ Storage::url($swimmingpool->image) }}" alt="{{ $swimmingpool->name }}" class="w-full h-52 object-cover object-center rounded-t-xl">
+                        <div class="p-6">
+                            <h2 class="text-3xl font-bold text-blue-600 mb-3">{{ $swimmingpool->name }}</h2>
+                            <p class="text-gray-700 text-base leading-relaxed mb-6">{{ $swimmingpool->description }}</p>
+                            <div class="flex justify-between items-center">
                                 @if(Auth::check() && auth()->user()->role === 'admin')
-                                    <a href="{{ route('admin.swimmingpools.show', $swimmingpool->id) }}" class="btn btn-info btn-sm">View</a>
-                                    <a href="{{ route('admin.swimmingpools.edit', $swimmingpool->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                    <form action="{{ route('admin.swimmingpools.destroy', $swimmingpool->id) }}" method="POST" style="display:inline;">
+                                    <a href="{{ route('customer.swimmingpools.show', $swimmingpool->id) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                        View
+                                    </a>
+                                    {{-- <a href="{{ route('customer.swimmingpools.edit', $swimmingpool->id) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                        Edit
+                                    </a> --}}
+                                    {{-- <form action="{{ route('customer.swimmingpools.destroy', $swimmingpool->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this pool?');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this pool?');">
+                                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                                             Delete
                                         </button>
-                                    </form>
+                                    </form> --}}
                                 @elseif(Auth::check() && auth()->user()->role === 'customer')
-                                    <a href="{{ route('customer.swimmingpools.show', $swimmingpool->id) }}" class="btn btn-info btn-sm">View</a>
+                                    <a href="{{ route('customer.swimmingpools.show', $swimmingpool->id) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                        View Details
+                                    </a>
                                 @endif
                             </div>
                         </div>
                     </div>
                 @endforeach
+            @else
+                <p class="text-lg text-gray-600 col-span-full">No swimming pools available at the moment. Please check back later!</p>
             @endif
         </div>
-        
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
