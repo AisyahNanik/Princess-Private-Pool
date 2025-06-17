@@ -17,13 +17,11 @@ use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
 use App\Http\Controllers\User\PaymentController as UserPaymentController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Middleware\RoleMiddleware;
-use App\Models\Swimmingpool;
 // use App\Http\Controllers\MidtransCallbackController;
 
 // 🔹 Halaman utama
 Route::get('/', function () {
-    $swimmingpools = SwimmingPool::all(); // Fetch all pools from the database
-    return view('welcome', compact('swimmingpools'));
+    return view('welcome');
 });
 
 Route::get('/home', function () {
