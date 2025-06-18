@@ -4,32 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Princess Private Pools</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    {{-- We no longer need the following as they are in admin.blade.php --}}
+    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
+    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" /> --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #FFB6C1, #87CEFA, #FFFFFF);
-            background-size: 400% 400%;
-            animation: gradientAnimation 8s ease infinite;
-            color: #333;
-        }
-        @keyframes gradientAnimation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .navbar-brand {
-            font-weight: bold;
-        }
-        .container {
-            padding-top: 30px;
-        }
+        /* Remove redundant styles that are already in admin.blade.php if they are identical */
+        /* For example, the gradient background and font-family should be controlled by admin.blade.php */
+        /* Only keep styles specific to the dashboard content here */
+
         .dashboard-title {
             font-size: 2.5rem;
             font-weight: bold;
@@ -104,7 +87,12 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+@extends('admin') {{-- This line tells Blade to extend the 'admin.blade.php' layout --}}
+
+@section('content') {{-- All content within this section will be injected into @yield('content') in admin.blade.php --}}
+
+    {{-- The navigation bar from admindashboard.blade.php should be removed as it's now in admin.blade.php --}}
+    {{-- <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
             <a class="navbar-brand" href="#"><i class="fas fa-chart-line me-2"></i> Dashboard Admin</a>
             <div class="ms-auto">
@@ -124,9 +112,11 @@
                 </div>
             </div>
         </div>
-    </nav>
+    </nav> --}}
 
-    <div class="container">
+    {{-- The `container` div from admin.blade.php already has padding-top: 70px --}}
+    {{-- The `container mt-4` class is also applied by admin.blade.php already --}}
+    <div class="container"> {{-- You can still wrap your specific dashboard content in a container here if needed for more granular control --}}
         <h1 class="dashboard-title"><i class="fas fa-tachometer-alt me-2"></i> Admin Dashboard - Princess Private Pools</h1>
 
         <div class="btn-group-custom">
@@ -255,6 +245,10 @@
             });
         }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- We no longer need this as it's included in admin.blade.php --}}
+    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> --}}
+
+@endsection
+
 </body>
 </html>
