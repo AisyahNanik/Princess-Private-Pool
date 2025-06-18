@@ -89,33 +89,7 @@
 
 @extends('admin') {{-- This line tells Blade to extend the 'admin.blade.php' layout --}}
 
-@section('content') {{-- All content within this section will be injected into @yield('content') in admin.blade.php --}}
-
-    {{-- The navigation bar from admindashboard.blade.php should be removed as it's now in admin.blade.php --}}
-    {{-- <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand" href="#"><i class="fas fa-chart-line me-2"></i> Dashboard Admin</a>
-            <div class="ms-auto">
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user me-2"></i> {{ Auth::user()->name }}
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i> Profile</a></li>
-                        <li>
-                            <form method="POST" action="{{ route('logout') }}">
-                                @csrf
-                                <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i> Log Out</button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </nav> --}}
-
-    {{-- The `container` div from admin.blade.php already has padding-top: 70px --}}
-    {{-- The `container mt-4` class is also applied by admin.blade.php already --}}
+@section('content') 
     <div class="container"> {{-- You can still wrap your specific dashboard content in a container here if needed for more granular control --}}
         <h1 class="dashboard-title"><i class="fas fa-tachometer-alt me-2"></i> Admin Dashboard - Princess Private Pools</h1>
 
