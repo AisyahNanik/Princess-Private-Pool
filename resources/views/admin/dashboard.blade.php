@@ -4,13 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Princess Private Pools</title>
-    {{-- We no longer need the following as they are in admin.blade.php --}}
-    {{-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"> --}}
-    {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" /> --}}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Remove redundant styles that are already in admin.blade.php if they are identical */
-        /* For example, the gradient background and font-family should be controlled by admin.blade.php */
         /* Only keep styles specific to the dashboard content here */
 
         .dashboard-title {
@@ -87,10 +82,11 @@
 </head>
 <body>
 
-@extends('admin') {{-- This line tells Blade to extend the 'admin.blade.php' layout --}}
+@extends('layouts.admin') {{-- Perubahan ada di sini: 'layouts.admin' --}}
 
-@section('content') 
-    <div class="container"> {{-- You can still wrap your specific dashboard content in a container here if needed for more granular control --}}
+@section('content')
+
+    <div class="container">
         <h1 class="dashboard-title"><i class="fas fa-tachometer-alt me-2"></i> Admin Dashboard - Princess Private Pools</h1>
 
         <div class="btn-group-custom">
@@ -171,13 +167,12 @@
     </div>
 
     <script>
-        // Contoh data untuk grafik (ganti dengan data sebenarnya dari backend Anda)
         const bookingsData = {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
             datasets: [{
                 label: 'Jumlah Pemesanan',
                 data: [5, 12, 8, 15, 9, 18],
-                backgroundColor: 'rgba(54, 162, 235, 0.7)', // Blue
+                backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
             }]
@@ -219,8 +214,6 @@
             });
         }
     </script>
-    {{-- We no longer need this as it's included in admin.blade.php --}}
-    {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script> --}}
 
 @endsection
 
