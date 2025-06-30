@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -7,12 +7,15 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+    <!-- Styles & Scripts (pastikan disesuaikan link vercel / domain kamu) -->
     @viteReactRefresh
-    @vite(['resources/css/app.css', 'resources/js/app.js'], ['https://princess-private-pool-aisyahnanik95-gmailcoms-projects.vercel.app'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'], 'https://www.kolamrenang.web.id')
 
+    <!-- Background Animation -->
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -22,7 +25,7 @@
             position: relative;
             overflow-x: hidden;
             color: #333;
-            min-height: 100vh; /* Ensure full viewport height */
+            min-height: 100vh;
             margin: 0;
         }
         @keyframes gradientAnimation {
@@ -50,6 +53,8 @@
             </div>
         </main>
     </div>
+
+    <!-- Optional JS (Bootstrap for modal, etc) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
