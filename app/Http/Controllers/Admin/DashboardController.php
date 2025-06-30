@@ -12,13 +12,11 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Mengambil data dari masing-masing model
         $swimmingpools = SwimmingPool::all();
         $allotments = Allotment::all();
-        $bookings = Booking::all();
-        $payments = Payment::all();
+        $bookings = Booking::with('user')->get(); // lebih aman pakai with agar tidak error saat akses user
+        $payments = Payment::with('user')->get();
 
-        // Mengirim data ke view dashboard
-        return view('dashboard', compact('swimmingpools', 'allotments', 'bookings', 'payments'));
+        return view('admin.dashboard', compact('swimmingpools', 'allotments', 'bookings', 'payments'));
     }
 }
