@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
@@ -7,15 +7,15 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Fonts -->
+    <!-- Font dari Bunny -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Styles & Scripts (pastikan disesuaikan link vercel / domain kamu) -->
+    <!-- Vite: pastikan tidak pakai domain di parameter -->
     @viteReactRefresh
-    @vite(['resources/css/app.css', 'resources/js/app.js'], 'https://www.kolamrenang.web.id')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Background Animation -->
+    <!-- Background animasi -->
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -37,8 +37,10 @@
 </head>
 <body class="font-sans antialiased">
     <div class="min-h-screen">
+        <!-- Navigasi utama -->
         @include('layouts.navigation')
 
+        <!-- Header jika ada -->
         @isset($header)
             <header class="bg-white dark:bg-gray-800 shadow">
                 <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -47,6 +49,7 @@
             </header>
         @endisset
 
+        <!-- Konten utama -->
         <main class="py-10 px-4 sm:px-6 lg:px-8">
             <div class="max-w-7xl mx-auto">
                 @yield('content')
@@ -54,7 +57,7 @@
         </main>
     </div>
 
-    <!-- Optional JS (Bootstrap for modal, etc) -->
+    <!-- Bootstrap JS opsional jika pakai modal -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
