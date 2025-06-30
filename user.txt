@@ -1,0 +1,6 @@
+user : "Admin"
+Password : "makannasijanganlupa"
+
+
+User : "Customer"
+Password : "minumairputihjanganlupa"
