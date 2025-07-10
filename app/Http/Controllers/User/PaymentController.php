@@ -7,21 +7,30 @@ use App\Models\Payment;
 use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Midtrans\Snap;
 use Midtrans\Config;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Http;
 
 class PaymentController extends Controller
 {
     public function index()
     {
-        $payments = Payment::with('booking')->get();
+        // Hanya ambil pembayaran milik user yang login
+        $payments = Payment::with('booking')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
         return view('customer.payments.index', compact('payments'));
     }
 
     public function create()
     {
-        $bookings = Booking::where('status', 'pending')->get();
+        // Ambil booking milik user yang belum dibayar
+        $bookings = Booking::where('user_id', auth()->id())
+            ->where('status', 'pending')
+            ->get();
+
         return view('customer.payments.create', compact('bookings'));
     }
 
@@ -32,11 +41,11 @@ class PaymentController extends Controller
             'payment_method' => 'required|string|in:cash,midtrans',
         ]);
 
-        $booking = Booking::findOrFail($request->booking_id);
+        $booking = Booking::where('user_id', auth()->id())->findOrFail($request->booking_id);
         $total = $booking->total_payments;
         $orderId = 'ORDER-' . Str::uuid();
-
         $snapToken = null;
+        $redirectUrl = null;
 
         if ($request->payment_method === 'midtrans') {
             // Konfigurasi Midtrans
@@ -45,76 +54,84 @@ class PaymentController extends Controller
             Config::$isSanitized = true;
             Config::$is3ds = true;
 
-            // buat data transaksi 
+            // Buat data transaksi Midtrans
             $transaction = [
-            'transaction_details' => [
-                'order_id' => $booking->slug,
-                'gross_amount' => $booking->total_payments,
-            ],
-            'customer_details' => [
-                'first_name' => $booking->user->name,
-                'email' => $booking->user->email,
-            ],
-            'enabled_payments' => ['gopay', 'bank_transfer'],
-        ];
-
-        // Guzzle untuk panggil Snap API
-        $client = new Client();
-
-        try {
-            $response = $client->post('https://app.sandbox.midtrans.com/snap/v1/transactions', [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Basic ' . base64_encode(config('midtrans.server_key') . ':'),
+                'transaction_details' => [
+                    'order_id' => $orderId,
+                    'gross_amount' => (int) $total,
                 ],
-                'json' => $transaction,
-            ]);
+                'customer_details' => [
+                    'first_name' => auth()->user()->name,
+                    'email' => auth()->user()->email,
+                ],
+                'enabled_payments' => ['gopay', 'bank_transfer'],
+            ];
 
-            $body = json_decode($response->getBody(), true);
-            $snapToken = $body['token'];
-            $redirectUrl = $body['redirect_url'];
+            // Kirim request ke Midtrans Snap
+            $client = new Client();
 
-            // Simpan snap_token dan redirect_url ke database
-            $payment = new Payment();
-            $payment->booking_id = $booking->id;
-            $payment->slug = Str::uuid();
-            $payment->payment_type = 'midtrans';
-            $payment->status = 'pending';
-            $payment->snap_token = $snapToken;
-            $payment->snap_url = $redirectUrl;
-            $payment->save();
+            try {
+                $response = $client->post('https://app.sandbox.midtrans.com/snap/v1/transactions', [
+                    'headers' => [
+                        'Accept' => 'application/json',
+                        'Content-Type' => 'application/json',
+                        'Authorization' => 'Basic ' . base64_encode(config('midtrans.server_key') . ':'),
+                    ],
+                    'json' => $transaction,
+                ]);
 
-        } catch (\Exception $e) {
-            return back()->with('error', 'Gagal membuat transaksi Midtrans: ' . $e->getMessage());
+                $body = json_decode($response->getBody(), true);
+                $snapToken = $body['token'];
+                $redirectUrl = $body['redirect_url'];
+
+            } catch (\Exception $e) {
+                return back()->with('error', 'Gagal membuat transaksi Midtrans: ' . $e->getMessage());
             }
+        }
 
-        // Payment::create([
-        //     'booking_id' => $booking->id,
-        //     'order_id' => $orderId,
-        //     'transaction_status' => 'pending',
-        //     'payment_type' => $request->payment_method,
-        //     'amount' => $total,
-        //     'snap_token' => $snapToken,
-        //     'expired_at' => now()->addHours(3),
-        // ]);
+        // Simpan data pembayaran
+        Payment::create([
+            'booking_id' => $booking->id,
+            'user_id' => auth()->id(), // ⬅️ Tambahkan ini
+            'slug' => Str::uuid(),
+            'order_id' => $orderId,
+            'transaction_status' => 'pending',
+            'payment_type' => $request->payment_method,
+            'snap_token' => $snapToken,
+            'snap_url' => $redirectUrl,
+            'amount' => $total,
+            'status' => 'pending',
+            'expired_at' => now()->addHours(3),
+        ]);
 
         return redirect()->route('customer.payments.index')->with('success', 'Pembayaran berhasil dibuat!');
     }
-}
 
     public function show(Payment $payment)
     {
-                return view('customer.payments.show', compact('payment'));
+        // Cek apakah user yang melihat adalah pemilik pembayaran
+        if ($payment->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('customer.payments.show', compact('payment'));
     }
 
     public function edit(Payment $payment)
     {
+        if ($payment->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         return view('customer.payments.edit', compact('payment'));
     }
 
     public function update(Request $request, Payment $payment)
     {
+        if ($payment->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $request->validate([
             'status' => 'required|in:pending,paid,canceled',
         ]);
@@ -126,21 +143,29 @@ class PaymentController extends Controller
 
     public function destroy(Payment $payment)
     {
+        if ($payment->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $payment->delete();
+
         return redirect()->route('customer.payments.index')->with('success', 'Data pembayaran dihapus.');
     }
 
     public function checkStatus(Payment $payment)
     {
+        if ($payment->user_id !== auth()->id()) {
+            abort(403);
+        }
+
         $serverKey = config('midtrans.server_key');
         $orderId = $payment->order_id;
 
         $response = Http::withBasicAuth($serverKey, '')
-            ->get("https://api.midtrans.com/v2/{$orderId}/status");
+            ->get("https://api.sandbox.midtrans.com/v2/{$orderId}/status");
 
         $status = $response->json();
 
         return view('customer.payments.status', compact('status', 'payment'));
     }
-
 }

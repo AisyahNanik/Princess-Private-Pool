@@ -19,7 +19,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Middleware\RoleMiddleware;
 // use App\Http\Controllers\MidtransCallbackController;
 
-// 🔹 Halaman utama
+// 🔹 Halaman utama (public)
 Route::get('/', function () {
     return view('welcome');
 });
@@ -42,19 +42,18 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// 🔹 Route global tanpa role
+// 🔹 Route global (tanpa role spesifik, misalnya public bisa lihat daftar kolam)
 Route::resource('swimmingpools', SwimmingpoolController::class);
 Route::resource('allotments', AllotmentController::class);
 Route::resource('bookings', BookingController::class);
 Route::resource('payments', PaymentController::class);
-// Route::post('/midtrans/callback', [MidtransCallbackController::class, 'receive']);
 
-// 🔹 Route notifikasi Midtrans (TIDAK pakai middleware auth!)
+// 🔹 Notifikasi Midtrans (tidak pakai auth middleware!)
 Route::post('/payment/notification', [PaymentController::class, 'notification'])->name('payment.notification');
 
 // 🔹 Route untuk Admin
-Route::middleware(['auth', RoleMiddleware::class.':admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard'); // Menggunakan DashboardController
+Route::middleware(['auth', RoleMiddleware::class . ':admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('swimmingpools', AdminSwimmingpoolController::class);
     Route::resource('allotments', AdminAllotmentController::class);
     Route::resource('bookings', AdminBookingController::class);
@@ -62,12 +61,19 @@ Route::middleware(['auth', RoleMiddleware::class.':admin'])->prefix('admin')->na
 });
 
 // 🔹 Route untuk Customer
-Route::middleware(['auth', RoleMiddleware::class.':customer'])->prefix('customer')->name('customer.')->group(function () {
-    Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('dashboard'); 
+Route::middleware(['auth', RoleMiddleware::class . ':customer'])->prefix('customer')->name('customer.')->group(function () {
+    Route::get('/dashboard', [CustomerController::class, 'dashboard'])->name('dashboard');
+
+    // Resource routes
     Route::resource('swimmingpools', UserSwimmingpoolController::class);
     Route::resource('bookings', UserBookingController::class);
-    Route::resource('payments', UserPaymentController::class);
+    
+    // ✅ Resource payments tanpa route 'show' default (karena kita override pakai slug)
+    Route::resource('payments', UserPaymentController::class)->except(['show']);
+
+    // ✅ Custom route show untuk slug
+    Route::get('/payments/{slug}', [UserPaymentController::class, 'show'])->name('payments.show');
 });
 
-// 🔹 Route auth bawaan Laravel
-require __DIR__.'/auth.php';
+// 🔹 Route auth bawaan Laravel Breeze/Fortify/etc.
+require __DIR__ . '/auth.php';

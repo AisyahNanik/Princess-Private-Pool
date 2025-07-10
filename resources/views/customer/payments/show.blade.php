@@ -8,22 +8,54 @@
         <div class="card-body">
             <h5 class="card-title">Pembayaran #{{ $payment->id }}</h5>
             <p><strong>Booking ID:</strong> {{ $payment->booking_id }}</p>
-            <p><strong>Total Bayar:</strong> Rp {{ number_format($payment->total_amount) }}</p>
-            <p><strong>Status:</strong> {{ ucfirst($payment->status) }}</p>
-            <p><strong>Metode Pembayaran:</strong> {{ $payment->payment_method }}</p>
-            {{-- <p><strong>Expired:</strong> {{ \Carbon\Carbon::parse($payment->expired_time)->format('d M Y H:i') }}</p> --}}
+            <p><strong>Total Bayar:</strong> Rp {{ number_format($payment->amount) }}</p>
+            <p><strong>Status:</strong> 
+                @if($payment->transaction_status === 'settlement')
+                    <span class="badge bg-success text-white">Lunas</span>
+                @elseif($payment->transaction_status === 'pending')
+                    <span class="badge bg-warning text-dark">Menunggu</span>
+                @elseif($payment->transaction_status === 'expire')
+                    <span class="badge bg-danger text-white">Kadaluarsa</span>
+                @else
+                    <span class="badge bg-secondary text-white">{{ ucfirst($payment->transaction_status) }}</span>
+                @endif
+            </p>
+            <p><strong>Metode Pembayaran:</strong> {{ ucfirst($payment->payment_type) }}</p>
 
-            <a href="{{ route('customer.payments.index') }}" class="btn btn-secondary">Kembali</a>
+            <a href="{{ route('customer.payments.index') }}" class="btn btn-secondary mt-3">Kembali</a>
 
-            @if ($payment->status === 'pending')
-                <a href="{{ route('customer.payments.edit', $payment->id) }}" class="btn btn-primary">Edit</a>
-                <form action="{{ route('customer.payments.destroy', $payment->id) }}" method="POST" class="d-inline">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Yakin ingin menghapus pembayaran ini?')">Hapus</button>
-                </form>
+            @if ($payment->payment_type === 'midtrans' && $payment->transaction_status === 'pending' && $payment->snap_token)
+                <button class="btn btn-success mt-3" onclick="payWithSnap('{{ $payment->snap_token }}')">
+                    Bayar Sekarang
+                </button>
             @endif
         </div>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+@if ($payment->payment_type === 'midtrans' && $payment->transaction_status === 'pending' && $payment->snap_token)
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('midtrans.client_key') }}"></script>
+<script>
+    function payWithSnap(snapToken) {
+        window.snap.pay(snapToken, {
+            onSuccess: function(result) {
+                alert("Pembayaran berhasil!");
+                location.reload();
+            },
+            onPending: function(result) {
+                alert("Menunggu konfirmasi pembayaran...");
+                location.reload();
+            },
+            onError: function(result) {
+                alert("Terjadi kesalahan pembayaran.");
+            },
+            onClose: function() {
+                alert("Pembayaran dibatalkan.");
+            }
+        });
+    }
+</script>
+@endif
 @endsection
